@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encuesta — Estudiantes Nivel Terciario · ISLI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul:       #1a3a5c;
+  --azul-light: #2a5a8c;
+  --azul-pale:  #e8f0f8;
+  --dorado:     #9a7b3a;
+  --dorado-l:   #c4a45a;
+  --papel:      #f7f4ef;
+  --papel-d:    #ede9e0;
+  --texto:      #1c1c1c;
+  --suave:      #4a4a4a;
+  --borde:      #d4cfc4;
+  --foco:       #2a5a8c;
+  --error:      #c0392b;
+  --ok:         #2e7d32;
+  --r:          6px;
+  --serif:      'EB Garamond', Georgia, serif;
+  --sans:       'Inter', system-ui, sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--papel);color:var(--texto);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* HEADER */
+.site-header{background:var(--azul);color:#fff;padding:24px 24px 20px;border-bottom:3px solid var(--dorado)}
+.header-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:18px}
+.header-logo{width:60px;height:60px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.header-text .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dorado-l);margin-bottom:4px}
+.header-text h1{font-family:var(--serif);font-size:clamp(18px,3.5vw,26px);font-weight:500;line-height:1.2}
+.header-text .sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:3px}
+@media(max-width:480px){.header-inner{flex-direction:column;text-align:center}.header-logo{width:48px;height:48px}}
+
+/* INTRO */
+.intro-wrap{max-width:760px;margin:24px auto 0;padding:0 16px}
+.intro-card{background:#fff;border:1px solid var(--borde);border-left:4px solid var(--dorado);border-radius:var(--r);padding:18px 22px;font-size:14px;color:var(--suave);line-height:1.7}
+.intro-card strong{color:var(--texto)}
+
+/* PROGRESO */
+.progress-wrap{max-width:760px;margin:18px auto 0;padding:0 16px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--suave);margin-bottom:5px}
+.progress-bar{height:4px;background:var(--borde);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--dorado);border-radius:2px;transition:width .4s ease;width:0%}
+
+/* FORM */
+#survey-form{max-width:760px;margin:22px auto 60px;padding:0 16px}
+
+/* SECCIÓN */
+.section{display:none;animation:fadeIn .25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.section-header{margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--borde)}
+.section-tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dorado);font-weight:600;margin-bottom:3px}
+.section-title{font-family:var(--serif);font-size:clamp(16px,3vw,21px);font-weight:500;color:var(--azul)}
+.bloque-badge{display:inline-block;background:var(--azul);color:#fff;font-size:10px;font-weight:600;letter-spacing:.08em;padding:2px 8px;border-radius:3px;margin-bottom:6px;text-transform:uppercase}
+
+/* Q BLOCK */
+.q-block{background:#fff;border:1px solid var(--borde);border-radius:var(--r);padding:16px 18px;margin-bottom:12px}
+.q-label{font-size:14px;font-weight:500;color:var(--texto);margin-bottom:10px;line-height:1.5}
+.q-num{color:var(--dorado);font-weight:600;margin-right:3px}
+.q-hint{font-size:12px;color:var(--suave);margin-bottom:8px;font-style:italic}
+.q-required{color:var(--dorado);margin-left:2px}
+
+/* TEXTO INPUT */
+.q-text{width:100%;border:1px solid var(--borde);border-radius:4px;padding:9px 11px;font-family:var(--sans);font-size:14px;color:var(--texto);background:var(--papel)}
+.q-text:focus{outline:none;border-color:var(--foco);background:#fff}
+
+/* SELECT */
+.q-select{width:100%;border:1px solid var(--borde);border-radius:4px;padding:9px 11px;font-family:var(--sans);font-size:14px;color:var(--texto);background:var(--papel);cursor:pointer}
+.q-select:focus{outline:none;border-color:var(--foco)}
+
+/* RADIO/CHECKBOX OPCIONES */
+.opts{list-style:none;display:flex;flex-direction:column;gap:5px}
+.opt label{display:flex;align-items:flex-start;gap:9px;cursor:pointer;padding:7px 9px;border-radius:4px;border:1px solid transparent;transition:background .15s,border-color .15s;font-size:14px;line-height:1.4}
+.opt label:hover{background:var(--azul-pale);border-color:var(--foco)}
+.opt input[type=radio],.opt input[type=checkbox]{margin-top:2px;accent-color:var(--azul);flex-shrink:0;width:15px;height:15px}
+.opt input:checked+span{color:var(--azul);font-weight:500}
+
+/* OTRO */
+.otro-input{border:1px solid var(--borde);border-radius:4px;padding:6px 9px;font-family:var(--sans);font-size:13px;width:100%;margin-top:5px;background:var(--papel);display:none}
+.otro-input:focus{outline:none;border-color:var(--foco);background:#fff}
+.show-otro{display:block!important}
+
+/* MATRIX PILLS 1-5 */
+.matrix-wrap{display:flex;flex-direction:column}
+.matrix-row{display:flex;align-items:center;gap:5px;padding:7px 0;border-bottom:1px solid var(--papel-d)}
+.matrix-row:last-child{border-bottom:none}
+.matrix-row-label{flex:1;font-size:13px;color:var(--texto);line-height:1.4;padding-right:10px;min-width:0}
+.matrix-pills{display:flex;gap:5px;flex-shrink:0}
+.matrix-pills input[type=radio]{display:none}
+.matrix-pills label{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--borde);background:var(--papel);font-size:12px;font-weight:600;color:var(--suave);cursor:pointer;transition:all .15s;user-select:none}
+.matrix-pills label:hover{border-color:var(--azul-light);background:var(--azul-pale);color:var(--azul)}
+.matrix-pills input:checked+label{background:var(--azul);border-color:var(--azul);color:#fff;box-shadow:0 2px 5px rgba(26,58,92,.2)}
+.matrix-pills label[data-v="1"]:hover{border-color:#c0392b;color:#c0392b;background:#fdf0ee}
+.matrix-pills label[data-v="2"]:hover{border-color:#e67e22;color:#e67e22;background:#fef5ec}
+.matrix-pills label[data-v="3"]:hover{border-color:#9a7b3a;color:#9a7b3a;background:#fdf9f0}
+.matrix-pills label[data-v="4"]:hover{border-color:#27ae60;color:#27ae60;background:#edf8f2}
+.matrix-pills label[data-v="5"]:hover{border-color:#1a6b3a;color:#1a6b3a;background:#e5f4ec}
+.matrix-pills input[data-v="1"]:checked+label{background:#c0392b;border-color:#c0392b}
+.matrix-pills input[data-v="2"]:checked+label{background:#e67e22;border-color:#e67e22}
+.matrix-pills input[data-v="3"]:checked+label{background:#9a7b3a;border-color:#9a7b3a}
+.matrix-pills input[data-v="4"]:checked+label{background:#27ae60;border-color:#27ae60}
+.matrix-pills input[data-v="5"]:checked+label{background:#1a6b3a;border-color:#1a6b3a}
+.matrix-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--suave);margin-top:8px;padding-top:6px;border-top:1px dashed var(--borde);font-style:italic}
+.matrix-header-row{display:flex;align-items:center;gap:5px;padding:0 0 4px 0}
+.matrix-header-row .mhl{flex:1}
+.matrix-header-row .mhc{width:34px;text-align:center;font-size:10px;font-weight:600;color:var(--suave);text-transform:uppercase}
+@media(max-width:520px){.matrix-pills label{width:28px;height:28px;font-size:11px}.matrix-row-label{font-size:12px}}
+
+/* PASE */
+.pase-box{background:var(--azul-pale);border:1px solid var(--dorado-l);border-left:4px solid var(--dorado);border-radius:var(--r);padding:12px 16px;margin-bottom:14px;font-size:13.5px;color:var(--azul);font-weight:500;line-height:1.5}
+.pase-arrow{display:flex;flex-direction:column;gap:5px;margin-left:4px}
+.pase-arrow li{font-size:13px;color:var(--suave);list-style:none;padding-left:0}
+.pase-arrow li::before{content:"→ ";color:var(--dorado);font-weight:600}
+
+/* TEXTAREA */
+.q-textarea{width:100%;min-height:70px;border:1px solid var(--borde);border-radius:4px;padding:9px 11px;font-family:var(--sans);font-size:14px;color:var(--texto);background:var(--papel);resize:vertical;line-height:1.5}
+.q-textarea:focus{outline:none;border-color:var(--foco);background:#fff}
+
+/* NAVEGACIÓN */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:10px}
+.btn{font-family:var(--sans);font-size:14px;font-weight:500;padding:10px 22px;border-radius:var(--r);border:none;cursor:pointer;transition:all .15s}
+.btn-prev{background:transparent;color:var(--suave);border:1px solid var(--borde)}
+.btn-prev:hover{background:var(--papel-d)}
+.btn-next{background:var(--azul);color:#fff;margin-left:auto}
+.btn-next:hover{background:var(--azul-light)}
+.btn-submit{background:var(--dorado);color:#fff;margin-left:auto}
+.btn-submit:hover{background:var(--dorado-l)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* SUBMIT STATE */
+#submit-state{display:none;text-align:center;padding:40px 20px;max-width:760px;margin:0 auto}
+#submit-state.show{display:block}
+.submit-icon{font-size:48px;margin-bottom:14px}
+.submit-title{font-family:var(--serif);font-size:24px;color:var(--azul);margin-bottom:10px}
+.submit-msg{font-size:14px;color:var(--suave);max-width:460px;margin:0 auto;line-height:1.7}
+
+.site-footer{text-align:center;padding:18px;font-size:12px;color:var(--suave);border-top:1px solid var(--borde)}
+@media(max-width:480px){.q-block{padding:12px}.nav-row{flex-wrap:wrap}.btn{width:100%;text-align:center}.btn-next,.btn-submit{margin-left:0}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <img src="data:image/png;base64,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" alt="ISLI" class="header-logo">
+    <div class="header-text">
+      <div class="eyebrow">Encuesta institucional</div>
+      <h1>Instituto Superior La Inmaculada</h1>
+      <div class="sub">Estudiantes de Nivel Terciario · Cursando, egresados y ex-cursantes</div>
+    </div>
+  </div>
+</header>
+
+<div class="intro-wrap">
+  <div class="intro-card">
+    Esta encuesta es parte de un proceso de mejora institucional del ISLI.<br>
+    Completarla lleva entre <strong>10 y 15 minutos</strong>. No hay respuestas correctas ni incorrectas: lo que más nos importa es tu perspectiva sincera.<br><br>
+    Muchas gracias por tu tiempo y colaboración.
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="progress-text">Paso 1 de 8</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+
+<form id="survey-form" novalidate>
+
+<!-- ══════════════════════════════
+     S0 — DATOS PERSONALES
+════════════════════════════════ -->
+<div class="section active" id="s0">
+  <div class="section-header">
+    <div class="section-tag">Datos personales</div>
+    <div class="section-title">Antes de empezar, contanos un poco sobre vos</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">01.</span>¿Qué edad tenés?<span class="q-required">*</span></div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="edad" value="17 a 25 años"><span>17 a 25 años</span></label></li>
+      <li class="opt"><label><input type="radio" name="edad" value="25 a 35 años"><span>25 a 35 años</span></label></li>
+      <li class="opt"><label><input type="radio" name="edad" value="35 a 45 años"><span>35 a 45 años</span></label></li>
+      <li class="opt"><label><input type="radio" name="edad" value="Más de 45 años"><span>Más de 45 años</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">02.</span>¿En qué localidad vivís?<span class="q-required">*</span></div>
+    <input type="text" class="q-text" name="localidad" placeholder="Nombre de tu localidad" maxlength="100">
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">03.</span>¿Con qué género te identificás?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="genero" value="Masculino"><span>Masculino</span></label></li>
+      <li class="opt"><label><input type="radio" name="genero" value="Femenino"><span>Femenino</span></label></li>
+      <li class="opt"><label><input type="radio" name="genero" value="Otro / Prefiero no decirlo"><span>Otro / Prefiero no decirlo</span></label></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S1 — PREGUNTAS GENERALES
+════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-tag">Preguntas generales</div>
+    <div class="section-title">Tu carrera y situación actual</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.1</span>¿Qué carrera estás cursando o cursaste?<span class="q-required">*</span></div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q01" value="Profesorado de Educación Especial con orientación en Discapacidad Intelectual"><span>Profesorado de Educación Especial con orientación en Discapacidad Intelectual</span></label></li>
+      <li class="opt"><label><input type="radio" name="q01" value="Profesorado de Educación Primaria"><span>Profesorado de Educación Primaria</span></label></li>
+      <li class="opt"><label><input type="radio" name="q01" value="Tecnicatura en Gastronomía"><span>Tecnicatura en Gastronomía</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.2</span>¿En qué situación te encontrás actualmente respecto a la carrera?<span class="q-required">*</span></div>
+    <div class="q-hint">Tu respuesta determinará las preguntas que verás a continuación.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q02" value="cursando" id="sit_cursando"><span>Estoy cursando actualmente</span></label></li>
+      <li class="opt"><label><input type="radio" name="q02" value="interrumpi_retomar"><span>Interrumpí mis estudios pero tengo intención de retomar</span></label></li>
+      <li class="opt"><label><input type="radio" name="q02" value="interrumpi_no"><span>Interrumpí mis estudios y no tengo intención de retomar</span></label></li>
+      <li class="opt"><label><input type="radio" name="q02" value="egresado"><span>Ya egresé</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.3</span>¿En qué año de la carrera estás o estabas cuando dejaste?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q03" value="1° año"><span>1° año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q03" value="2° año"><span>2° año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q03" value="3° año"><span>3° año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q03" value="4° año"><span>4° año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q03" value="Ya egresé"><span>Ya egresé</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.4</span>¿Trabajás actualmente, además de estudiar o haber estudiado?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q04" value="Sí, trabajo tiempo completo"><span>Sí, trabajo tiempo completo</span></label></li>
+      <li class="opt"><label><input type="radio" name="q04" value="Sí, trabajo medio tiempo"><span>Sí, trabajo medio tiempo</span></label></li>
+      <li class="opt"><label><input type="radio" name="q04" value="No trabajo"><span>No trabajo</span></label></li>
+      <li class="opt"><label><input type="radio" name="q04" value="Prefiero no decirlo"><span>Prefiero no decirlo</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.5</span>En el caso de estar trabajando: ¿cómo es tu situación laboral?</div>
+    <div class="q-hint">Podés marcar más de una.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q05" value="Tiene relación con lo que estudié"><span>Mi trabajo tiene relación con lo que estoy estudiando / estudié</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q05" value="No tiene relación con lo que estudié"><span>Mi trabajo no tiene relación con lo que estoy estudiando / estudié</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q05" value="Trabajo en relación de dependencia"><span>Trabajo en relación de dependencia</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q05" value="Emprendimiento personal"><span>Es un emprendimiento personal</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">0.6</span>¿Tenés personas a cargo (hijos/as, familiares, otros)?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q06" value="Sí"><span>Sí</span></label></li>
+      <li class="opt"><label><input type="radio" name="q06" value="No"><span>No</span></label></li>
+      <li class="opt"><label><input type="radio" name="q06" value="Prefiero no decirlo"><span>Prefiero no decirlo</span></label></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S2 — ELECCIÓN DE LA INSTITUCIÓN
+════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-tag">Sección 1</div>
+    <div class="section-title">Elección de la institución</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">1.1</span>¿Por qué elegiste estudiar en esta institución?<span class="q-required">*</span></div>
+    <div class="q-hint">Seleccioná hasta 3 opciones.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q11" value="Oferta académica / carrera específica"><span>Por la oferta académica / buscaba esa carrera para estudiar</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Calidad académica / prestigio"><span>Por la calidad académica / prestigio de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Cercanía geográfica"><span>Por cercanía geográfica</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Bajo costo"><span>Por su bajo costo</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Única opción disponible"><span>Por ser la única opción disponible</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Recomendación de conocidos"><span>Por recomendación de conocidos</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11" value="Sintonía con el ideario"><span>Por sintonía con el ideario de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q11_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q11_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">1.2</span>¿Por qué medio te enteraste de la institución o de la carrera?</div>
+    <div class="q-hint">Seleccioná todas las que correspondan.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q12" value="Redes sociales"><span>Redes sociales</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12" value="Recomendación de familia o amigos"><span>Recomendación de familia o amigos</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12" value="Recomendación de docentes del secundario"><span>Recomendación de docentes del secundario</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12" value="Folletería o cartelería"><span>Folletería o cartelería</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12" value="Sitio web de la institución"><span>Sitio web de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12" value="Ya la conocía de antes"><span>Ya la conocía de antes</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q12_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q12_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">1.3</span>Antes de ingresar, ¿consideraste otras instituciones o carreras como alternativa?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q13" value="Sí" id="q13_si"><span>Sí</span></label></li>
+      <li class="opt"><label><input type="radio" name="q13" value="No"><span>No</span></label></li>
+    </ul>
+    <input type="text" class="otro-input" id="q13_cual" placeholder="¿Cuáles?" maxlength="300" style="margin-top:8px">
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">1.4</span>Antes de ingresar, ¿cuáles eran tus expectativas con la institución en cuanto a…?</div>
+    <div class="q-hint">1 = Muy bajas &nbsp;|&nbsp; 5 = Muy altas</div>
+    <div id="matrix-14"></div>
+    <div class="matrix-legend"><span>1 — Muy bajas</span><span>5 — Muy altas</span></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">1.5</span>¿En qué medida estas expectativas iniciales se cumplieron?</div>
+    <div class="q-hint">1 = No se cumplieron en absoluto &nbsp;|&nbsp; 5 = Se superaron ampliamente</div>
+    <div id="matrix-15"></div>
+    <div class="matrix-legend"><span>1 — No se cumplieron</span><span>5 — Se superaron</span></div>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S3 — PROPUESTA ACADÉMICA
+════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-tag">Sección 2</div>
+    <div class="section-title">Propuesta académica y condiciones de cursada</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">2.1</span>¿Cómo evaluás los siguientes aspectos de tu carrera?</div>
+    <div class="q-hint">1 = Muy insatisfecho/a &nbsp;|&nbsp; 5 = Muy satisfecho/a</div>
+    <div id="matrix-21"></div>
+    <div class="matrix-legend"><span>1 — Muy insatisfecho/a</span><span>5 — Muy satisfecho/a</span></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">2.2</span>¿Cómo evaluás las condiciones prácticas de cursada?</div>
+    <div class="q-hint">1 = Muy insatisfecho/a &nbsp;|&nbsp; 5 = Muy satisfecho/a</div>
+    <div id="matrix-22"></div>
+    <div class="matrix-legend"><span>1 — Muy insatisfecho/a</span><span>5 — Muy satisfecho/a</span></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">2.3</span>¿Qué modalidad de cursada preferirías o hubieras preferido?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q23" value="Completamente presencial"><span>Completamente presencial (como actualmente)</span></label></li>
+      <li class="opt"><label><input type="radio" name="q23" value="Semipresencial"><span>Semipresencial (combinación de presencial y virtual)</span></label></li>
+      <li class="opt"><label><input type="radio" name="q23" value="Completamente virtual"><span>Completamente virtual / a distancia</span></label></li>
+      <li class="opt"><label><input type="radio" name="q23" value="Me es indistinto"><span>Me es indistinto</span></label></li>
+    </ul>
+  </div>
+
+  <!-- BLOQUE A — solo cursando -->
+  <div id="bloque-a-wrap">
+    <div class="pase-box">▶ Las siguientes preguntas son <strong>solo para quienes están cursando actualmente</strong>. Si interrumpiste o egresaste, pasá al botón Continuar.</div>
+    <div class="q-block">
+      <div class="bloque-badge">Bloque A — Cursando</div>
+      <div class="q-label"><span class="q-num">2.4</span>¿Los horarios actuales de cursada se adaptan a tu vida cotidiana?</div>
+      <ul class="opts">
+        <li class="opt"><label><input type="radio" name="q24" value="Sí, se adaptan muy bien"><span>Sí, se adaptan muy bien</span></label></li>
+        <li class="opt"><label><input type="radio" name="q24" value="Parcialmente, con algunas dificultades"><span>Se adaptan parcialmente, con algunas dificultades</span></label></li>
+        <li class="opt"><label><input type="radio" name="q24" value="Se adaptan poco"><span>Se adaptan poco, me genera conflictos frecuentes</span></label></li>
+        <li class="opt"><label><input type="radio" name="q24" value="No se adaptan en absoluto"><span>No se adaptan en absoluto, es uno de mis principales problemas</span></label></li>
+      </ul>
+    </div>
+    <div class="q-block">
+      <div class="bloque-badge">Bloque A — Cursando</div>
+      <div class="q-label"><span class="q-num">2.5</span>Si pudieras cambiar UNA sola cosa de la propuesta académica, ¿qué sería?</div>
+      <textarea class="q-textarea" name="q25" rows="2" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="q-block">
+      <div class="bloque-badge">Bloque A — Cursando</div>
+      <div class="q-label"><span class="q-num">2.6</span>Si pudieras cambiar UNA sola cosa de las condiciones de cursada, ¿qué sería?</div>
+      <textarea class="q-textarea" name="q26" rows="2" placeholder="Tu respuesta..."></textarea>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S4 — CLIMA Y VÍNCULOS
+════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-tag">Sección 3</div>
+    <div class="section-title">Clima institucional y vínculos</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">3.1</span>¿Cómo describirías el clima general que se vive en la institución?</div>
+    <div class="q-hint">Seleccioná las 3 palabras o frases que más lo representen.</div>
+    <ul class="opts" id="opts-31">
+      <li class="opt"><label><input type="checkbox" name="q31" value="Cálido y contenedor"><span>Cálido y contenedor</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Organizado y profesional"><span>Organizado y profesional</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Distante o frío"><span>Distante o frío</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Caótico o desorganizado"><span>Caótico o desorganizado</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Familiar y cercano"><span>Familiar y cercano</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Rígido o poco flexible"><span>Rígido o poco flexible</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Motivador e inspirador"><span>Motivador e inspirador</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Indiferente hacia los estudiantes"><span>Indiferente hacia los estudiantes</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Respetuoso y seguro"><span>Respetuoso y seguro</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31" value="Tradicional y desactualizado"><span>Tradicional y desactualizado</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q31_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q31_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+    <div id="q31-warn" style="display:none;color:var(--error);font-size:12px;margin-top:6px">Podés seleccionar hasta 3 opciones.</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">3.2</span>¿Cómo evaluás el vínculo con los siguientes actores institucionales?</div>
+    <div class="q-hint">1 = Muy malo &nbsp;|&nbsp; 5 = Muy bueno</div>
+    <div id="matrix-32"></div>
+    <div class="matrix-legend"><span>1 — Muy malo</span><span>5 — Muy bueno</span></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">3.3</span>Cuando tuviste alguna dificultad académica o personal que afectó tus estudios, ¿qué hiciste?</div>
+    <div class="q-hint">Seleccioná todas las que correspondan.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q33" value="Busqué ayuda en docente y la encontré"><span>Busqué ayuda en algún docente y la encontré</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33" value="Busqué ayuda en dirección y la encontré"><span>Busqué ayuda en la dirección o coordinación y la encontré</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33" value="Busqué ayuda pero sin respuesta satisfactoria"><span>Busqué ayuda pero no obtuve respuesta satisfactoria</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33" value="No supe a quién acudir"><span>No supe a quién acudir</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33" value="Preferí no comentarlo"><span>Preferí no comentarlo con nadie de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33" value="No tuve dificultades"><span>No tuve dificultades de ese tipo</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q33_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q33_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">3.4</span>¿Sentís que la institución se interesa genuinamente por la trayectoria y bienestar de los estudiantes?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q34" value="Sí, completamente"><span>Sí, completamente</span></label></li>
+      <li class="opt"><label><input type="radio" name="q34" value="En parte, con algunas excepciones"><span>En parte, con algunas excepciones</span></label></li>
+      <li class="opt"><label><input type="radio" name="q34" value="Poco, depende de a quién te dirijas"><span>Poco, depende de a quién te dirijas</span></label></li>
+      <li class="opt"><label><input type="radio" name="q34" value="No, me sentí un número más"><span>No, me sentí un número más</span></label></li>
+      <li class="opt"><label><input type="radio" name="q34" value="No lo puedo evaluar"><span>No lo puedo evaluar con claridad</span></label></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S5 — IDENTIDAD Y VALORACIÓN
+════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-tag">Sección 4</div>
+    <div class="section-title">Identidad institucional y valoración</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">4.1</span>¿Cómo percibís los valores e ideario de la institución en el día a día?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q41" value="Son muy presentes y auténticos"><span>Son muy presentes y se viven de manera auténtica</span></label></li>
+      <li class="opt"><label><input type="radio" name="q41" value="Presentes en el discurso, poco en la práctica"><span>Están presentes en el discurso pero poco en la práctica</span></label></li>
+      <li class="opt"><label><input type="radio" name="q41" value="Poco visibles en la vida cotidiana"><span>Son poco visibles en la vida cotidiana</span></label></li>
+      <li class="opt"><label><input type="radio" name="q41" value="Desconocía el ideario"><span>Desconocía que la institución tuviera un ideario particular</span></label></li>
+      <li class="opt"><label><input type="radio" name="q41" value="Me resultaron indiferentes"><span>Me resultaron indiferentes para mi decisión de estudiar aquí</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">4.2</span>¿En qué medida sentís que estudiar en esta institución te diferencia positivamente frente al mercado laboral?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q42" value="Mucho, buen reconocimiento"><span>Mucho, creo que el título y la formación tienen buen reconocimiento</span></label></li>
+      <li class="opt"><label><input type="radio" name="q42" value="Algo, no estoy seguro/a"><span>Algo, aunque no estoy muy seguro/a de la incidencia que tenga en mi futuro laboral</span></label></li>
+      <li class="opt"><label><input type="radio" name="q42" value="Poco, similar a otras opciones"><span>Poco, creo que es similar a otras opciones de la zona</span></label></li>
+      <li class="opt"><label><input type="radio" name="q42" value="Nada, el título no tiene mayor peso"><span>Nada, siento que el título no tiene mayor peso por la institución de la que egrese</span></label></li>
+      <li class="opt"><label><input type="radio" name="q42" value="No lo puedo evaluar todavía"><span>Todavía no lo puedo evaluar</span></label></li>
+      <li class="opt"><label><input type="radio" name="q42" value="No sé o no quiero responder"><span>No sé o no quiero responder</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">4.3</span>¿Recomendarías esta institución a alguien de tu entorno que esté pensando en estudiar una carrera terciaria?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q43" value="Sí, sin dudarlo"><span>Sí, sin dudarlo</span></label></li>
+      <li class="opt"><label><input type="radio" name="q43" value="Sí, con advertencias"><span>Sí, pero con algunas advertencias o aclaraciones</span></label></li>
+      <li class="opt"><label><input type="radio" name="q43" value="Probablemente no"><span>Probablemente no</span></label></li>
+      <li class="opt"><label><input type="radio" name="q43" value="Definitivamente no"><span>Definitivamente no</span></label></li>
+      <li class="opt"><label><input type="radio" name="q43" value="Prefiero no responder"><span>Prefiero no responder</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">4.4</span>¿Qué áreas de formación te generan mayor interés para continuar estudiando o capacitarte?</div>
+    <div class="q-hint">Podés seleccionar hasta 3 opciones.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q44" value="Educación y Docencia"><span>Educación y Docencia</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Educación Inclusiva y Discapacidad"><span>Educación Inclusiva y Discapacidad</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Psicopedagogía y Aprendizaje"><span>Psicopedagogía y Aprendizaje</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Salud Mental y Acompañamiento Terapéutico"><span>Salud Mental y Acompañamiento Terapéutico</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Terapia Ocupacional y Rehabilitación"><span>Terapia Ocupacional y Rehabilitación</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Nutrición y Alimentación Saludable"><span>Nutrición y Alimentación Saludable</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Atención Integral de Personas Mayores"><span>Atención Integral de Personas Mayores</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Gastronomía"><span>Gastronomía</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Administración y Gestión"><span>Administración y Gestión</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="Tecnología e Informática"><span>Tecnología e Informática</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q44" value="No tengo interés en continuar estudiando"><span>No tengo interés en continuar estudiando actualmente</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">4.5</span>Si el Instituto incorporara nuevas propuestas académicas, ¿cuáles te interesarían?</div>
+    <div class="q-hint">Podés seleccionar hasta 3 opciones.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q45" value="Tecnicatura en Acompañamiento Terapéutico"><span>Tecnicatura en Acompañamiento Terapéutico</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Técnico Superior en Psicopedagogía"><span>Técnico Superior en Psicopedagogía</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Técnico Superior en Nutrición y Alimentación Saludable"><span>Técnico Superior en Nutrición y Alimentación Saludable</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Formación Profesional en Asistencia en Rehabilitación y Apoyo Ocupacional"><span>Formación Profesional en Asistencia en Rehabilitación y Apoyo Ocupacional</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Trayecto de Formación en Intervención en TDAH, DEA y TEA en el Aula"><span>Trayecto de Formación en Intervención en TDAH, DEA y TEA en el Aula</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Formación en Acompañamiento Pedagógico e Inclusión Educativa"><span>Formación en Acompañamiento Pedagógico e Inclusión Educativa</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Tecnicatura Superior en Abordaje Integral del Adulto Mayor"><span>Tecnicatura Superior en Abordaje Integral del Adulto Mayor</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Licenciatura en Terapia Ocupacional (convenio universitario)"><span>Licenciatura en Terapia Ocupacional (mediante convenio universitario)</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q45_otro_chk" value="otro"><span>Otra (¿cuál?):</span></label>
+        <input type="text" class="otro-input" id="q45_otro" placeholder="Especificá..." maxlength="200"></li>
+      <li class="opt"><label><input type="checkbox" name="q45" value="Ninguna"><span>Ninguna de las anteriores</span></label></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S6 — BLOQUE B (Interrumpieron)
+════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="bloque-badge">Bloque B</div>
+    <div class="section-title">Quienes interrumpieron sus estudios</div>
+  </div>
+
+  <div class="pase-box">▶ Este bloque es <strong>solo para quienes interrumpieron sus estudios</strong> (con o sin intención de retomar). Si estás cursando o egresaste, hacé clic en Continuar.</div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">5.1</span>¿Pensaste alguna vez en abandonar la carrera?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q51" value="Sí, lo pensé y finalmente lo hice"><span>Sí, lo pensé seriamente y finalmente lo hice</span></label></li>
+      <li class="opt"><label><input type="radio" name="q51" value="Sí, lo pensé pero decidí continuar"><span>Sí, lo pensé seriamente pero decidí continuar</span></label></li>
+      <li class="opt"><label><input type="radio" name="q51" value="Sí, pasó por mi cabeza pero no fue serio"><span>Sí, pasó por mi cabeza alguna vez pero no fue algo serio</span></label></li>
+      <li class="opt"><label><input type="radio" name="q51" value="No, nunca lo consideré"><span>No, nunca lo consideré</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">5.2</span>¿Cuáles fueron los principales factores que dificultaron tu continuidad?</div>
+    <div class="q-hint">Seleccioná todas las que correspondan.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q52" value="Dificultades económicas"><span>Dificultades económicas</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Incompatibilidad horarios y trabajo"><span>Incompatibilidad entre los horarios de cursada y mi trabajo</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Carga académica excesiva"><span>Carga académica excesiva o mal distribuida</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Problemas personales o familiares"><span>Problemas personales o familiares</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Desmotivación con la carrera o institución"><span>Desmotivación con la carrera o con la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Formación no era lo esperado"><span>Sensación de que la formación no era lo que esperaba cuando inicié</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Falta de acompañamiento institucional"><span>Falta de acompañamiento o contención por parte de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Problemas con docentes o grupo"><span>Problemas con algún docente o con la dinámica del grupo</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Decidí estudiar otra carrera o institución"><span>Decidí estudiar otra carrera o en otra institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Modalidad presencial difícil de sostener"><span>La modalidad presencial me resulta difícil de sostener</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52" value="Sin dificultades significativas"><span>Ninguno, no tuve dificultades significativas</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q52_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q52_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">5.3</span>¿Qué tendría que cambiar en la institución para que consideraras retomar o hubieras continuado?</div>
+    <div class="q-hint">Seleccioná todas las que correspondan.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q53" value="Horarios flexibles o modalidad virtual"><span>Horarios más flexibles o modalidad semipresencial / virtual</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53" value="Mayor acompañamiento institucional"><span>Mayor acompañamiento y contención institucional</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53" value="Reducción del costo"><span>Reducción del costo de la carrera</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53" value="Mejoras en la calidad de enseñanza"><span>Mejoras en la calidad de la enseñanza</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53" value="Mayor vinculación laboral"><span>Mayor vinculación con el campo laboral</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53" value="Decisión definitiva ajena a la institución"><span>Nada, mi decisión fue definitiva por razones ajenas a la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q53_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q53_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S7 — BLOQUE C (Egresados)
+════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="bloque-badge">Bloque C</div>
+    <div class="section-title">Egresados/as</div>
+  </div>
+
+  <div class="pase-box">▶ Este bloque es <strong>solo para quienes ya egresaron</strong>. Si estás cursando o interrumpiste, hacé clic en Continuar.</div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.1</span>¿Ejercés actualmente en el área de tu carrera?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q61" value="Sí, exclusivamente en mi área"><span>Sí, trabajo exclusivamente en mi área de formación</span></label></li>
+      <li class="opt"><label><input type="radio" name="q61" value="Sí, combinado con otras actividades"><span>Sí, pero combino con otras actividades no relacionadas</span></label></li>
+      <li class="opt"><label><input type="radio" name="q61" value="No, trabajo en área diferente"><span>No, trabajo en un área diferente</span></label></li>
+      <li class="opt"><label><input type="radio" name="q61" value="No estoy trabajando"><span>No estoy trabajando actualmente</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.2</span>¿Cuánto tiempo tardaste en insertarte laboralmente después de egresar?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q62" value="Ya trabajaba en el área antes de egresar"><span>Ya trabajaba en el área antes de egresar</span></label></li>
+      <li class="opt"><label><input type="radio" name="q62" value="Menos de 6 meses"><span>Menos de 6 meses</span></label></li>
+      <li class="opt"><label><input type="radio" name="q62" value="Entre 6 meses y 1 año"><span>Entre 6 meses y 1 año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q62" value="Más de 1 año"><span>Más de 1 año</span></label></li>
+      <li class="opt"><label><input type="radio" name="q62" value="Aún no me inserté laboralmente"><span>Aún no me inserté laboralmente en mi área</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.3</span>¿Sentís que la formación recibida te preparó bien para el ejercicio profesional?</div>
+    <div class="q-hint">1 = Nada preparado/a &nbsp;|&nbsp; 5 = Muy bien preparado/a</div>
+    <div id="matrix-63"></div>
+    <div class="matrix-legend"><span>1 — Nada preparado/a</span><span>5 — Muy bien preparado/a</span></div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.4</span>¿Qué aspectos de la formación valorás más hoy, en retrospectiva?</div>
+    <div class="q-hint">Seleccioná hasta 3 opciones.</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="checkbox" name="q64" value="Solidez de contenidos teóricos"><span>La solidez de los contenidos teóricos</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64" value="Calidad y compromiso de los docentes"><span>La calidad y el compromiso de los docentes</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64" value="Instancias prácticas y campo laboral"><span>Las instancias prácticas y de contacto con el campo laboral</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64" value="Vínculo humano y acompañamiento"><span>El vínculo humano y el acompañamiento recibido</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64" value="Valores e ideario"><span>Los valores e ideario de la institución</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64" value="Organización y gestión institucional"><span>La organización y gestión institucional</span></label></li>
+      <li class="opt"><label><input type="checkbox" name="q64_otro_chk" value="otro"><span>Otro:</span></label>
+        <input type="text" class="otro-input" id="q64_otro" placeholder="Especificá..." maxlength="200"></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.5</span>¿Tenés contacto con la institución desde que egresaste?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q65" value="Sí, de manera frecuente"><span>Sí, de manera frecuente</span></label></li>
+      <li class="opt"><label><input type="radio" name="q65" value="Sí, ocasionalmente"><span>Sí, ocasionalmente</span></label></li>
+      <li class="opt"><label><input type="radio" name="q65" value="No, perdí el contacto"><span>No, perdí el contacto</span></label></li>
+      <li class="opt"><label><input type="radio" name="q65" value="No, pero me gustaría retomarlo"><span>No, pero me gustaría retomarlo</span></label></li>
+    </ul>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">6.6</span>¿Te interesaría participar en actividades de la institución como egresado/a (charlas, mentorías, redes de egresados, etc.)?</div>
+    <ul class="opts">
+      <li class="opt"><label><input type="radio" name="q66" value="Sí, con mucho interés"><span>Sí, con mucho interés</span></label></li>
+      <li class="opt"><label><input type="radio" name="q66" value="Sí, dependiendo de la propuesta"><span>Sí, dependiendo de la propuesta</span></label></li>
+      <li class="opt"><label><input type="radio" name="q66" value="Probablemente no"><span>Probablemente no</span></label></li>
+      <li class="opt"><label><input type="radio" name="q66" value="No"><span>No</span></label></li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     S8 — COMENTARIOS FINALES
+════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-tag">Comentarios finales</div>
+    <div class="section-title">Para todos/as</div>
+  </div>
+
+  <div class="q-block">
+    <div class="q-label"><span class="q-num">7.1</span>¿Hay algo más que quieras contarnos sobre tu experiencia en la institución que no hayamos preguntado? (opcional)</div>
+    <textarea class="q-textarea" name="q71" rows="5" placeholder="Tu respuesta..."></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="btn btn-prev" onclick="goPrev()">← Anterior</button>
+    <button type="button" class="btn btn-submit" id="btn-enviar" onclick="submitForm()">Enviar respuestas ✓</button>
+  </div>
+</div>
+
+<!-- ESTADO ENVÍO -->
+<div id="submit-state">
+  <div class="submit-icon" id="submit-icon">⏳</div>
+  <div class="submit-title" id="submit-title">Enviando...</div>
+  <div class="submit-msg" id="submit-msg">Estamos registrando tus respuestas. Por favor no cerrés esta página.</div>
+</div>
+
+</form>
+
+<footer class="site-footer">
+  Instituto Superior La Inmaculada · Encuesta estudiantes nivel terciario · Respuestas anónimas y confidenciales
+</footer>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAYWk7y_3et_4gbh1KxGzU2R6p-Dc81lX2UEkwo6gj8AC9jF7-M-THgUp-sX80rQNI/exec";
+let cur = 0;
+
+function updateProgress() {
+  const pct = Math.round((cur / (TOTAL-1)) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-text').textContent = `Paso ${cur+1} de ${TOTAL}`;
+}
+function goNext() {
+  document.getElementById('s'+cur).classList.remove('active');
+  cur++;
+  document.getElementById('s'+cur).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goPrev() {
+  document.getElementById('s'+cur).classList.remove('active');
+  cur--;
+  document.getElementById('s'+cur).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Otros ──
+document.addEventListener('change', function(e) {
+  const t = e.target;
+  // checkboxes otro
+  if (t.type==='checkbox' && t.name && t.name.endsWith('_otro_chk')) {
+    const id = t.name.replace('_chk','');
+    const inp = document.getElementById(id);
+    if (inp) inp.classList.toggle('show-otro', t.checked);
+  }
+  // q13 si/no
+  if (t.name==='q13') {
+    document.getElementById('q13_cual').classList.toggle('show-otro', t.value==='Sí');
+  }
+  // Límite 3 — q31
+  if (t.name==='q31' || t.name==='q31_otro_chk') {
+    const all = document.querySelectorAll('input[name="q31"], input[name="q31_otro_chk"]');
+    const n = Array.from(all).filter(i=>i.checked).length;
+    document.getElementById('q31-warn').style.display = n>3 ? 'block':'none';
+    if (n>3) t.checked=false;
+  }
+});
+
+// ── Matrices pills ──
+function buildMatrix(id, rows) {
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  rows.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'matrix-row';
+    div.innerHTML = `<div class="matrix-row-label">${r.label}</div><div class="matrix-pills">
+      ${[1,2,3,4,5].map(v=>`<input type="radio" name="${r.name}" id="${r.name}_${v}" value="${v}" data-v="${v}"><label for="${r.name}_${v}" data-v="${v}">${v}</label>`).join('')}
+    </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+buildMatrix('matrix-14',[
+  {label:'Calidad de la enseñanza', name:'q14_ens'},
+  {label:'Organización y gestión institucional', name:'q14_org'},
+  {label:'Posibilidades laborales al egresar', name:'q14_lab'},
+  {label:'Infraestructura y recursos disponibles', name:'q14_inf'},
+  {label:'Vínculo humano y acompañamiento de los docentes', name:'q14_doc'},
+]);
+buildMatrix('matrix-15',[
+  {label:'Calidad de la enseñanza', name:'q15_ens'},
+  {label:'Organización y gestión institucional', name:'q15_org'},
+  {label:'Posibilidades laborales al egresar', name:'q15_lab'},
+  {label:'Infraestructura y recursos disponibles', name:'q15_inf'},
+  {label:'Vínculo humano y acompañamiento de los docentes', name:'q15_doc'},
+]);
+buildMatrix('matrix-21',[
+  {label:'Contenidos y materias propuestas por la carrera', name:'q21_cont'},
+  {label:'Actualización de los contenidos al mundo laboral', name:'q21_act'},
+  {label:'Calidad de las clases dictadas por los docentes', name:'q21_cal'},
+  {label:'Metodologías de enseñanza utilizadas en clase', name:'q21_met'},
+  {label:'Uso de tecnología y recursos digitales en la enseñanza', name:'q21_tec'},
+  {label:'Instancias prácticas, pasantías o vinculación con el campo laboral', name:'q21_pra'},
+  {label:'Claridad en los criterios de evaluación', name:'q21_eva'},
+  {label:'Infraestructura disponible para adquisición de habilidades específicas', name:'q21_inf'},
+  {label:'Convenios con instituciones para prácticas docentes/profesionales', name:'q21_conv'},
+]);
+buildMatrix('matrix-22',[
+  {label:'Horarios de cursada', name:'q22_hor'},
+  {label:'Carga horaria semanal', name:'q22_car'},
+  {label:'Disponibilidad de materiales y bibliografía', name:'q22_mat'},
+  {label:'Estado y equipamiento de aulas y espacios físicos', name:'q22_aul'},
+  {label:'Conectividad y recursos tecnológicos en la institución', name:'q22_con'},
+]);
+buildMatrix('matrix-32',[
+  {label:'Con los docentes', name:'q32_doc'},
+  {label:'Con el equipo directivo y coordinadores', name:'q32_dir'},
+  {label:'Con el personal administrativo', name:'q32_adm'},
+  {label:'Entre compañeros/as de carrera', name:'q32_comp'},
+]);
+buildMatrix('matrix-63',[
+  {label:'Conocimientos teóricos y conceptuales', name:'q63_teo'},
+  {label:'Habilidades prácticas para el ejercicio profesional', name:'q63_pra'},
+  {label:'Herramientas para seguir aprendiendo de manera autónoma', name:'q63_aut'},
+  {label:'Capacidad para trabajar en equipo y relacionarte con colegas', name:'q63_eq'},
+  {label:'Preparación para afrontar situaciones reales del campo laboral', name:'q63_lab'},
+]);
+
+// ── Recolección ──
+function getChecked(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i=>i.value).join(' | ');
+}
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+function getText(name) {
+  const el = document.querySelector(`[name="${name}"]`);
+  return el ? el.value.trim() : '';
+}
+
+function collectData() {
+  const sit = getRadio('q02');
+  const d = {
+    timestamp: new Date().toISOString(),
+    situacion: sit,
+    // Datos personales
+    edad: getRadio('edad'), localidad: getText('localidad'), genero: getRadio('genero'),
+    // Generales
+    q01: getRadio('q01'), q02: sit, q03: getRadio('q03'),
+    q04: getRadio('q04'), q05: getChecked('q05'), q06: getRadio('q06'),
+    // Sección 1
+    q11: getChecked('q11'), q11_otro: getText('q11_otro'),
+    q12: getChecked('q12'), q12_otro: getText('q12_otro'),
+    q13: getRadio('q13'), q13_cual: getText('q13_cual'),
+    q14_ens:getRadio('q14_ens'),q14_org:getRadio('q14_org'),q14_lab:getRadio('q14_lab'),q14_inf:getRadio('q14_inf'),q14_doc:getRadio('q14_doc'),
+    q15_ens:getRadio('q15_ens'),q15_org:getRadio('q15_org'),q15_lab:getRadio('q15_lab'),q15_inf:getRadio('q15_inf'),q15_doc:getRadio('q15_doc'),
+    // Sección 2
+    q21_cont:getRadio('q21_cont'),q21_act:getRadio('q21_act'),q21_cal:getRadio('q21_cal'),
+    q21_met:getRadio('q21_met'),q21_tec:getRadio('q21_tec'),q21_pra:getRadio('q21_pra'),
+    q21_eva:getRadio('q21_eva'),q21_inf:getRadio('q21_inf'),q21_conv:getRadio('q21_conv'),
+    q22_hor:getRadio('q22_hor'),q22_car:getRadio('q22_car'),q22_mat:getRadio('q22_mat'),q22_aul:getRadio('q22_aul'),q22_con:getRadio('q22_con'),
+    q23:getRadio('q23'),
+    q24:getRadio('q24'),q25:getText('q25'),q26:getText('q26'),
+    // Sección 3
+    q31:getChecked('q31'),q31_otro:getText('q31_otro'),
+    q32_doc:getRadio('q32_doc'),q32_dir:getRadio('q32_dir'),q32_adm:getRadio('q32_adm'),q32_comp:getRadio('q32_comp'),
+    q33:getChecked('q33'),q33_otro:getText('q33_otro'),
+    q34:getRadio('q34'),
+    // Sección 4
+    q41:getRadio('q41'),q42:getRadio('q42'),q43:getRadio('q43'),
+    q44:getChecked('q44'),q45:getChecked('q45'),q45_otro:getText('q45_otro'),
+    // Bloque B
+    q51:getRadio('q51'),q52:getChecked('q52'),q52_otro:getText('q52_otro'),
+    q53:getChecked('q53'),q53_otro:getText('q53_otro'),
+    // Bloque C
+    q61:getRadio('q61'),q62:getRadio('q62'),
+    q63_teo:getRadio('q63_teo'),q63_pra:getRadio('q63_pra'),q63_aut:getRadio('q63_aut'),q63_eq:getRadio('q63_eq'),q63_lab:getRadio('q63_lab'),
+    q64:getChecked('q64'),q64_otro:getText('q64_otro'),
+    q65:getRadio('q65'),q66:getRadio('q66'),
+    // Final
+    q71:getText('q71'),
+  };
+  return d;
+}
+
+async function submitForm() {
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  document.getElementById('survey-form').style.display = 'none';
+  document.getElementById('submit-state').classList.add('show');
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(collectData())
+    });
+    document.getElementById('submit-icon').textContent='✅';
+    document.getElementById('submit-title').textContent='¡Muchas gracias!';
+    document.getElementById('submit-msg').textContent='Tus respuestas fueron registradas. Tu opinión es fundamental para que la institución pueda crecer y mejorar.';
+  } catch(err) {
+    document.getElementById('submit-icon').textContent='❌';
+    document.getElementById('submit-title').textContent='Hubo un problema al enviar';
+    document.getElementById('submit-msg').textContent='Por favor intentá de nuevo. Error: '+err.message;
+    btn.disabled=false;
+  }
+}
+
+updateProgress();
+</script>
+</body>
+</html>
