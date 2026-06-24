@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Encuesta — Estudiantes Nivel Terciario · ISLI</title>
+<title>Encuesta — Estudiantes Nivel Superior · ISLI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -154,7 +154,7 @@ body{font-family:var(--sans);background:var(--papel);color:var(--texto);font-siz
     <div class="header-text">
       <div class="eyebrow">Encuesta institucional</div>
       <h1>Instituto Superior La Inmaculada</h1>
-      <div class="sub">Estudiantes de Nivel Terciario · Cursando, egresados y ex-cursantes</div>
+      <div class="sub">Estudiantes de Nivel Superior · Cursando, egresados y ex-cursantes</div>
     </div>
   </div>
 </header>
@@ -525,7 +525,7 @@ body{font-family:var(--sans);background:var(--papel);color:var(--texto);font-siz
   </div>
 
   <div class="q-block">
-    <div class="q-label"><span class="q-num">4.3</span>¿Recomendarías esta institución a alguien de tu entorno que esté pensando en estudiar una carrera terciaria?</div>
+    <div class="q-label"><span class="q-num">4.3</span>¿Recomendarías esta institución a alguien de tu entorno que esté pensando en estudiar una carrera de nivel superior?</div>
     <ul class="opts">
       <li class="opt"><label><input type="radio" name="q43" value="Sí, sin dudarlo"><span>Sí, sin dudarlo</span></label></li>
       <li class="opt"><label><input type="radio" name="q43" value="Sí, con advertencias"><span>Sí, pero con algunas advertencias o aclaraciones</span></label></li>
@@ -749,12 +749,11 @@ body{font-family:var(--sans);background:var(--papel);color:var(--texto);font-siz
 </form>
 
 <footer class="site-footer">
-  Instituto Superior La Inmaculada · Encuesta estudiantes nivel terciario · Respuestas anónimas y confidenciales
+  Instituto Superior La Inmaculada · Encuesta estudiantes nivel superior · Respuestas anónimas y confidenciales
 </footer>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAYWk7y_3et_4gbh1KxGzU2R6p-Dc81lX2UEkwo6gj8AC9jF7-M-THgUp-sX80rQNI/exec";
-const TOTAL = 9; // secciones s0 … s8
 let cur = 0;
 
 function updateProgress() {
